@@ -24,7 +24,7 @@ def mix_audios(filename1, filename2):
 
     sound1_start, sound1_end = filename1.index('arctic'), filename1.index('.wav')
     sound2_start, sound2_end = filename2.index('arctic'), filename2.index('.wav')
-    name = "../../recordings/mixes/" + filename1[sound1_start:sound1_end] + '_' + filename2[sound2_start:sound2_end] + ".wav"
+    name = "../recordings/mixes/" + filename1[sound1_start:sound1_end] + '_' + filename2[sound2_start:sound2_end] + ".wav"
     combined.export(name, format='wav')
     
     return name
