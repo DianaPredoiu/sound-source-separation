@@ -163,3 +163,22 @@ def load_and_mix_files(female_filename, male_filename):
     
     return female, male, mix
 
+
+# In[ ]:
+
+
+def delete_final_zeros_for_silence(sound):
+    # Create an array that is 1 where a is 0, and pad each end with an extra 0.
+    iszero = np.concatenate(([0], np.equal(sound, 0).view(np.int8), [0]))
+    absdiff = np.abs(np.diff(iszero))
+    # Runs start and end where absdiff is 1.
+    ranges = np.where(absdiff == 1)[0].reshape(-1, 2)
+
+    if ranges.size == 0:
+        return sound
+       
+    start = ranges[len(ranges)-1][0]
+    stop = ranges[len(ranges)-1][1]
+    if stop == sound.shape[0]:
+        sound = sound[:start]
+    return sound
