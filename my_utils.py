@@ -89,7 +89,8 @@ def compute_mask(stft_1, stft_2):
 
 
 def get_stft_matrix_from_mixture(mask, mixture):
-    return np.multiply(mask, mixture)
+#     return np.multiply(mask, mixture)
+    return mask@mixture
 
 
 # In[ ]:
