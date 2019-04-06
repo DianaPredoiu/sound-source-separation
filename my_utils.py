@@ -7,6 +7,7 @@
 import librosa, librosa.display
 import numpy as np
 from pydub import AudioSegment
+import matplotlib.pyplot as plt
 
 
 # In[ ]:
@@ -78,7 +79,7 @@ def compute_mask(stft_1, stft_2):
     eps = np.finfo(np.float).eps
 
     # compute model as the sum of spectrograms
-    mix = eps + np.abs(stft_1) + np.abs(stft_2)
+    mix = np.abs(stft_1) + np.abs(stft_2)
     
     mask = np.divide(np.abs(stft_1), mix)
     
@@ -182,3 +183,25 @@ def delete_final_zeros_for_silence(sound):
     if stop == sound.shape[0]:
         sound = sound[:start]
     return sound
+
+
+# In[ ]:
+
+
+def show_plot(y_stft, title, pos):
+    plt.figure(figsize=(20, 20))
+    D = librosa.amplitude_to_db(np.abs(y_stft), ref=np.max)
+    plt.subplot(4, 2, pos)
+    librosa.display.specshow(D, y_axis='linear')
+    plt.colorbar(format='%+2.0f dB')
+    plt.title(title)
+    
+    
+# In[ ]:
+
+
+def show_waveplot(y_stft, title, pos):
+    plt.figure()
+    plt.subplot(3, 1, pos)
+    librosa.display.waveplot(y_stft, sr=16000)
+    plt.title(title)
