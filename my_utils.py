@@ -7,6 +7,7 @@
 import librosa, librosa.display
 import numpy as np
 from pydub import AudioSegment
+import matplotlib.pyplot as plt
 
 
 # In[ ]:
@@ -76,12 +77,20 @@ def compute_mask(stft_1, stft_2):
 #     print("aici: ", stft_1.shape, stft_2.shape)
     # small epsilon to avoid dividing by zero
     eps = np.finfo(np.float).eps
+#     print("eps: ", eps)
 
     # compute model as the sum of spectrograms
-    mix = eps + np.abs(stft_1) + np.abs(stft_2)
+    mix = np.abs(stft_1) + np.abs(stft_2)
+#     print(mix.shape)
     
     mask = np.divide(np.abs(stft_1), mix)
-    
+#     mask = np.zeros_like(stft_1)
+#     for k1 in range(stft_1.shape[0]):
+#         for k2 in range(stft_1.shape[1]):
+#             if (np.abs(stft_1[k1, k2]) - np.abs(stft_2[k1, k2])) > 0:
+#                 mask[k1, k2] = 1
+#             else:
+#                 mask[k1, k2] = 0
     return mask
 
 
@@ -96,7 +105,7 @@ def get_stft_matrix_from_mixture(mask, mixture):
 
 
 def write_new_audio_file(sound, filename):
-    inverse_sound_stft = librosa.istft(sound, , hop_length=512)
+    inverse_sound_stft = librosa.istft(sound)
     librosa.output.write_wav(filename, inverse_sound_stft, 16000)
     #s = sound.export(filename, format="wav")
 
@@ -163,3 +172,44 @@ def load_and_mix_files(female_filename, male_filename):
     
     return female, male, mix
 
+
+# In[ ]:
+
+
+def delete_final_zeros_for_silence(sound):
+    # Create an array that is 1 where a is 0, and pad each end with an extra 0.
+    iszero = np.concatenate(([0], np.equal(sound, 0).view(np.int8), [0]))
+    absdiff = np.abs(np.diff(iszero))
+    # Runs start and end where absdiff is 1.
+    ranges = np.where(absdiff == 1)[0].reshape(-1, 2)
+
+    if ranges.size == 0:
+        return sound
+       
+    start = ranges[len(ranges)-1][0]
+    stop = ranges[len(ranges)-1][1]
+    if stop == sound.shape[0]:
+        sound = sound[:start]
+    return sound
+
+
+# In[ ]:
+
+
+def show_plot(y_stft, title, pos):
+    plt.figure(figsize=(20, 20))
+    D = librosa.amplitude_to_db(np.abs(y_stft), ref=np.max)
+    plt.subplot(4, 2, pos)
+    librosa.display.specshow(D, y_axis='linear')
+    plt.colorbar(format='%+2.0f dB')
+    plt.title(title)
+    
+    
+# In[ ]:
+
+
+def show_waveplot(y_stft, title, pos):
+    plt.figure()
+    plt.subplot(3, 1, pos)
+    librosa.display.waveplot(y_stft, sr=16000)
+    plt.title(title)
