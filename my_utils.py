@@ -77,12 +77,20 @@ def compute_mask(stft_1, stft_2):
 #     print("aici: ", stft_1.shape, stft_2.shape)
     # small epsilon to avoid dividing by zero
     eps = np.finfo(np.float).eps
+#     print("eps: ", eps)
 
     # compute model as the sum of spectrograms
     mix = np.abs(stft_1) + np.abs(stft_2)
+#     print(mix.shape)
     
     mask = np.divide(np.abs(stft_1), mix)
-    
+#     mask = np.zeros_like(stft_1)
+#     for k1 in range(stft_1.shape[0]):
+#         for k2 in range(stft_1.shape[1]):
+#             if (np.abs(stft_1[k1, k2]) - np.abs(stft_2[k1, k2])) > 0:
+#                 mask[k1, k2] = 1
+#             else:
+#                 mask[k1, k2] = 0
     return mask
 
 
