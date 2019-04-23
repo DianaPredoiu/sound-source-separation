@@ -213,3 +213,13 @@ def show_waveplot(y_stft, title, pos):
     plt.subplot(3, 1, pos)
     librosa.display.waveplot(y_stft, sr=16000)
     plt.title(title)
+    
+# In[ ]:
+
+def reconstruct(spectrogram):
+    length = librosa.istft(spectrogram, window='hann').shape
+    x = np.random.normal(size=length)
+    
+    Z = np.abs(spectrogram) * np.exp(np.angle(spectrogram) * 1j)
+    x = librosa.istft(Z, window='hann')
+    return x
