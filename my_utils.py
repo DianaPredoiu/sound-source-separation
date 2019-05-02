@@ -25,7 +25,7 @@ def mix_audios(filename1, filename2):
 
     sound1_start, sound1_end = filename1.index('arctic'), filename1.index('.wav')
     sound2_start, sound2_end = filename2.index('arctic'), filename2.index('.wav')
-    name = "../recordings/mixes/" + filename1[sound1_start:sound1_end] + '_' + filename2[sound2_start:sound2_end] + ".wav"
+    name = "recordings/mixes/" + filename1[sound1_start:sound1_end] + '_' + filename2[sound2_start:sound2_end] + ".wav"
     combined.export(name, format='wav')
     
     return name
@@ -74,23 +74,13 @@ def make_wav_files_same_size(arr1, arr2):
 
 
 def compute_mask(stft_1, stft_2):
-#     print("aici: ", stft_1.shape, stft_2.shape)
     # small epsilon to avoid dividing by zero
     eps = np.finfo(np.float).eps
-#     print("eps: ", eps)
 
     # compute model as the sum of spectrograms
-    mix = np.abs(stft_1) + np.abs(stft_2)
-#     print(mix.shape)
-    
+    mix = eps + np.abs(stft_1) + np.abs(stft_2)    
     mask = np.divide(np.abs(stft_1), mix)
-#     mask = np.zeros_like(stft_1)
-#     for k1 in range(stft_1.shape[0]):
-#         for k2 in range(stft_1.shape[1]):
-#             if (np.abs(stft_1[k1, k2]) - np.abs(stft_2[k1, k2])) > 0:
-#                 mask[k1, k2] = 1
-#             else:
-#                 mask[k1, k2] = 0
+    
     return mask
 
 
